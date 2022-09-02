@@ -1,0 +1,55 @@
+version: "3.7"
+services:
+  web:
+    container_name: nextjs-web
+    build:
+      context: ./web
+    ports:
+      - "3000:3000"
+      - "9090:9090"
+    volumes:
+      - ./web:/home/web
+      - /home/web/node_modules
+    restart: always
+    command: npm run dev
+    env_file:
+      - ./web/.env
+  postgres:
+    container_name: hasura-postgres
+    image: postgres:12
+    restart: always
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - ./web/.env
+  graphql-engine:
+    container_name: hasura-engine
+    image: hasura/graphql-engine:v2.10.1
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "postgres"
+    restart: always
+    env_file:
+      - ./web/.env
+  hasura-console:
+    container_name: hasura-console
+    build:
+      context: ./hasura
+    ports:
+      - "9693:9693"
+      - "9695:9695"
+    volumes:
+      - ./hasura/metadata:/usr/src/hasura/metadata
+      - ./hasura/migrations:/usr/src/hasura/migrations
+      - ./hasura/seeds:/usr/src/hasura/seeds
+    depends_on:
+      - "graphql-engine"
+    restart: always
+    environment:
+      HASURA_RUN_CONSOLE: "true"
+      HASURA_GRAPHQL_ENDPOINT: http://localhost:8080
+    env_file:
+      - ./web/.env
+volumes:
+  db_data:

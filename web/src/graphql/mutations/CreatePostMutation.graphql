@@ -1,0 +1,7 @@
+mutation CreatePost($title: String, $content: String) {
+  insert_posts_one(
+    object: { title: $title, content: $content, post_users: { data: {} } }
+  ) {
+    id
+  }
+}

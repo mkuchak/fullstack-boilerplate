@@ -1,0 +1,3 @@
+- "!include public_post_user.yaml"
+- "!include public_posts.yaml"
+- "!include public_users.yaml"

@@ -1,0 +1,36 @@
+table:
+  name: posts
+  schema: public
+array_relationships:
+  - name: post_users
+    using:
+      foreign_key_constraint_on:
+        column: post_id
+        table:
+          name: post_user
+          schema: public
+insert_permissions:
+  - role: user
+    permission:
+      check: {}
+      columns:
+        - content
+        - published
+        - title
+select_permissions:
+  - role: guest
+    permission:
+      columns:
+        - published
+        - content
+        - id
+        - title
+      filter: {}
+  - role: user
+    permission:
+      columns:
+        - content
+        - id
+        - published
+        - title
+      filter: {}
